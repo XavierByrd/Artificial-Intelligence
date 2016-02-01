@@ -18,6 +18,7 @@ debug("Program Start")
 # Holder for our training points
 training = []
 TRAININGPOINTS = 2000
+TESTINGPOINTS = 2000
 
 # Size of our "view"
 WIDTH = 640
@@ -64,8 +65,7 @@ def runTraining():
         total = i
     return ptron
 
-def runTesting():
-    testPoints = [[17,3,1],[22,87,1],[-10,-2,1],[1,1,1], [0, 10, 1], [0, 0, 1], [1, 20, 1]]
+def runTestingVerbose():
     correctGuesses = 0
 
     # 1. Set the neuron's inputs
@@ -75,17 +75,39 @@ def runTesting():
     print("\t\t\t   ---Printing Results---")
     header = "Point \t\t\t\t Perceptron \t\t\t Formula: %s " %(FORMULA)
     print(header)
-    for i in range(0, len(testPoints)):
-        neuron.setInputs(testPoints[i])
-        guessIsCorrect = evaluatePerceptron(neuron, evaluateIfPointAboveFx(testPoints[i]))
+    for i in range(0, int(TESTINGPOINTS)):
+        neuron.setInputs(training[i].inputs)
+        guessIsCorrect = evaluatePerceptron(neuron, evaluateIfPointAboveFx(training[i].inputs))
         if(guessIsCorrect):
             correctGuesses += 1
         output = "%s \t %s \t %s" %\
-         (testPoints[i],\
+         (training[i].inputs,\
           neuron.getDeterminationInEnglish(),\
           guessIsCorrect)
         print(output)
-    print("Perceptron Success: " + str((correctGuesses/len(testPoints)) * 100) + "%")
+    print("")
+    print("Total Number of Training Points: " + str(TRAININGPOINTS))
+    print("Total Number of Test Points: " + str(TESTINGPOINTS))
+    print("Perceptron Success: " + str((correctGuesses/TESTINGPOINTS) * 100) + "%")
+    print("")
+    debug("Done.")
+
+def runTesting():
+    correctGuesses = 0
+
+    # 1. Set the neuron's inputs
+    # 2. Run f(x) and Perceptron
+    # 3. Compare Perceptron's Guess to the Mathematically Derived Answer
+    for i in range(0, int(TESTINGPOINTS)):
+        neuron.setInputs(training[i].inputs)
+        guessIsCorrect = evaluatePerceptron(neuron, evaluateIfPointAboveFx(training[i].inputs))
+        if(guessIsCorrect):
+            correctGuesses += 1
+    print("")
+    print("Total Number of Training Points: " + str(TRAININGPOINTS))
+    print("Total Number of Test Points: " + str(TESTINGPOINTS))
+    print("Perceptron Success1: " + str(correctGuesses)+"/"+str(TESTINGPOINTS))
+    print("Perceptron Success2: " + str((correctGuesses/TESTINGPOINTS) * 100) + "%")
     print("")
     debug("Done.")
 
@@ -99,4 +121,7 @@ debug("---")
 neuron = runTraining()
 info("Trained Perceptron: " + str(neuron.weights))
 
-runTesting()
+
+# Uncomment to speed up testing
+#runTesting()
+runTestingVerbose()
